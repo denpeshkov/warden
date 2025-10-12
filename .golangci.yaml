@@ -1,0 +1,83 @@
+version: "2"
+run:
+  timeout: 2m
+linters:
+  default: standard
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - contextcheck
+    - copyloopvar
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exptostd
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - gocritic
+    - godoclint
+    - godot
+    - gosec
+    - gosmopolitan
+    - govet
+    - iface
+    - ineffassign
+    - intrange
+    - loggercheck
+    - mirror
+    - misspell
+    - modernize
+    - musttag
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - nolintlint
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - predeclared
+    - promlinter
+    - reassign
+    - revive
+    - rowserrcheck
+    - sloglint
+    - sqlclosecheck
+    - staticcheck
+    - tagalign
+    - tagliatelle
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - unused
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+  settings:
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+    tagliatelle:
+      case:
+        rules:
+          json: snake
+          yaml: snake
+          toml: snake
+          env: upperSnake
+          envconfig: upperSnake
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/denpeshkov/warden

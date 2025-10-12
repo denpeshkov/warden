@@ -1,0 +1,76 @@
+name: CI
+env:
+  POSTGRES_URL: postgres://postgres:postgres@localhost:5432/warden?pool_max_conns=15&sslmode=disable
+  REDIS_URL: localhost:6379
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: test
+    env:
+      # The special value "local" tells Go to use the bundled Go version rather
+      # than trying to fetch one according to a `toolchain` value in `go.mod`.
+      # This ensures that we're really running the Go version in the CI matrix
+      # rather than one that the Go command has upgraded to automatically.
+      GOTOOLCHAIN: local
+    strategy:
+      matrix:
+        go-version: [1.25]
+        os: [ubuntu-latest]
+        postgres-version: [17]
+        redis-version: [8]
+    runs-on: ${{ matrix.os }}
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres-version }}
+        env:
+          POSTGRES_DB: "warden"
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "postgres"
+        options: >-
+          --health-cmd "pg_isready -U postgres -d warden"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:${{ matrix.redis-version }}
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Test
+        run: make test
+  golangci-lint:
+    name: golangci-lint
+    strategy:
+      matrix:
+        go-version: [1.25]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest

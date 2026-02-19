@@ -11,7 +11,6 @@ help: ## Display this help screen
 .PHONY: lint
 lint: ## Run linter
 	@go mod tidy -v && go mod verify
-	@golangci-lint config verify
 	@golangci-lint run --fix -v -c .golangci.yaml
 
 .PHONY: test

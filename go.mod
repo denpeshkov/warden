@@ -1,9 +1,9 @@
 module github.com/denpeshkov/warden
 
-go 1.25
+go 1.25.0
 
 require (
-	github.com/jackc/pgx/v5 v5.8.0
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/nalgeon/be v0.3.0
 	github.com/redis/go-redis/v9 v9.17.3
 )
